@@ -1,8 +1,8 @@
 ul {
-  max-width: 80rem;
+  max-width: 90rem; /* Wider grid */
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  grid-gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr)); /* Larger cards */
+  gap: 2.5rem; /* More spacing */
   margin: 2rem auto;
   padding: 0;
   list-style: none;
@@ -12,50 +12,66 @@ ul {
   position: relative;
   display: flex;
   flex-direction: column;
-  border-radius: 8px;
-  background: #1f1c2c;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-  animation: slide-up-fade-in 0.3s ease-out forwards;
+  border-radius: 12px; /* Smoother corners */
+  background: #2a273d; /* Darker background */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow */
+  animation: slide-up-fade-in 0.4s ease-out forwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover */
+  overflow: hidden; /* For image rounding */
+}
+
+.place-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
 .place-item button {
   background: transparent;
   border: none;
   padding: 0;
-  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smoother transform */
 }
 
 .place-item:nth-child(odd) button:hover,
 .place-item:nth-child(odd) button:focus {
-  box-shadow: 0 0 8px 4px rgba(255, 217, 0, 0.6);
-  border-radius: 8px;
-  transform: rotate(5deg);
+  box-shadow: 0 0 12px 6px rgba(255, 217, 0, 0.4); /* Larger glow */
+  border-radius: 12px;
+  transform: rotate(3deg) scale(1.02); /* Subtler rotation */
 }
 
 .place-item:nth-child(even) button:hover,
 .place-item:nth-child(even) button:focus {
-  box-shadow: 0 0 8px 4px rgba(255, 217, 0, 0.6);
-  border-radius: 8px;
-  transform: rotate(-5deg);
+  box-shadow: 0 0 12px 6px rgba(255, 217, 0, 0.4);
+  border-radius: 12px;
+  transform: rotate(-3deg) scale(1.02);
 }
 
 .place-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0.5rem;
+  border-radius: 8px 8px 0 0; /* Only round top */
+  aspect-ratio: 16/9; /* Consistent ratio */
+  transition: transform 0.3s ease; /* Zoom effect */
+}
+
+.place-item:hover img {
+  transform: scale(1.03);
 }
 
 .place-item h3 {
   font-family: "Raleway", sans-serif;
-  font-weight: normal;
-  font-size: 0.9rem;
+  font-weight: 500; /* Medium weight */
+  font-size: 1rem; /* Slightly larger */
   position: absolute;
-  bottom: 0;
+  bottom: 1rem;
   right: 1rem;
-  margin: 1rem auto;
+  margin: 0;
   background-color: #feee86;
-  border-radius: 4px;
-  padding: 0.15rem 0.35rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 6px; /* Smoother */
+  padding: 0.25rem 0.75rem; /* Better padding */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Deeper shadow */
+  color: #1a1a1a;
+  z-index: 1;
 }

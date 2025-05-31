@@ -1,17 +1,38 @@
 section {
-  max-width: 85rem;
-  margin: 2rem auto;
-  padding: 1rem;
-  border: 2px solid #0d373e;
-  border-radius: 8px;
+  max-width: 90rem; /* Slightly wider */
+  margin: 3rem auto; /* More vertical spacing */
+  padding: 2rem; /* More padding */
+  border: 2px solid rgba(13, 55, 62, 0.7); /* Semi-transparent */
+  border-radius: 12px; /* Smoother corners */
+  background: rgba(31, 28, 44, 0.6); /* Glass effect */
+  backdrop-filter: blur(8px); /* Frosted glass */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Deeper shadow */
+  transition: all 0.3s ease; /* Hover effect */
+}
+
+section:hover {
+  border-color: rgba(141, 238, 255, 0.4);
+  box-shadow: 0 0 30px rgba(141, 238, 255, 0.2);
 }
 
 section h2 {
   font-family: "Raleway", sans-serif;
-  font-size: 1.5rem;
-  margin: 0;
-  padding: 0;
-  margin-bottom: 1rem;
+  font-size: 1.75rem; /* Slightly larger */
+  font-weight: 500; /* Medium weight */
+  margin: 0 0 1.5rem; /* More bottom space */
   color: #8feeff;
   text-align: center;
+  letter-spacing: 0.1em; /* More spacing */
+  position: relative;
+}
+
+section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #8feeff, transparent);
 }

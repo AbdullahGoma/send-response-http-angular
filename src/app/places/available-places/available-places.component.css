@@ -1,3 +1,10 @@
 .fallback-text {
   text-align: center;
+  font-size: 1.25rem; /* Larger */
+  color: #9eb5b4;
+  padding: 2rem; /* More spacing */
+  animation: fadeIn 0.6s ease-out; /* Fade-in */
+  max-width: 60ch;
+  margin: 0 auto;
+  line-height: 1.8; /* Better readability */
 }
