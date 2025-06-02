@@ -1,7 +1,5 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Place } from '../place.model';
-import { catchError, map, Subscription, throwError } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { PlacesContainerComponent } from '../places-container/places-container.component';
 import { PlacesComponent } from '../places.component';
@@ -19,11 +17,6 @@ import { PlacesService } from '../places.service';
 })
 export class UserPlacesComponent implements OnInit {
   /**
-   * Holds the list of user-specific places.
-   */
-  places = signal<Place[] | undefined>(undefined);
-
-  /**
    * Tracks whether data is currently being fetched from the server.
    */
   isFetching = signal(false);
@@ -32,11 +25,19 @@ export class UserPlacesComponent implements OnInit {
    * Holds any error messages encountered during fetching.
    */
   error = signal('');
-
   /**
    * Injected instance of the PlacesService to load user places.
    */
   private placesService = inject(PlacesService);
+
+  /**
+   * Reactive reference to the user's favorite places.
+   * This signal automatically stays in sync with the service's state
+   * and can be used directly in templates for reactive updates.
+   *
+   * @returns Signal<Place[]> - The current array of user places
+   */
+  places = this.placesService.loadedUserPlaces;
 
   /**
    * Injected destroy reference to clean up subscriptions on component destroy.
@@ -51,9 +52,6 @@ export class UserPlacesComponent implements OnInit {
     this.isFetching.set(true);
 
     const subscription = this.placesService.loadUserPlaces().subscribe({
-      next: (places) => {
-        this.places.set(places);
-      },
       error: (error: Error) => {
         this.error.set(error.message);
       },

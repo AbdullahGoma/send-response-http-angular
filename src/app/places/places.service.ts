@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Place } from './place.model';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, throwError } from 'rxjs';
+import { catchError, map, tap, throwError } from 'rxjs';
 
 /**
  * Service for handling all logic related to places,
@@ -22,7 +22,11 @@ export class PlacesService {
   private userPlaces = signal<Place[]>([]);
 
   /**
-   * Read-only version of user places for external consumption.
+   * Provides read-only access to the user's favorite places.
+   * This signal exposes the current state of user places while preventing
+   * external modifications to maintain data integrity.
+   *
+   * @returns A ReadonlySignal<Place[]> that updates reactively when places change
    */
   loadedUserPlaces = this.userPlaces.asReadonly();
 
@@ -38,24 +42,46 @@ export class PlacesService {
   }
 
   /**
-   * Loads user-favorite (saved) places from the backend API.
-   * @returns An Observable stream of user-specific places.
+   * Loads the user's favorite places from the backend API and updates the local state.
+   * Handles the complete lifecycle of fetching user places including:
+   * - Making the HTTP request
+   * - Transforming the response
+   * - Updating the local signal state
+   * - Error handling with a custom message
+   *
+   * @returns Observable<Place[]> - A stream of user places data
+   * @throws Error with custom message when the request fails
    */
   loadUserPlaces() {
     return this.fetchPlaces(
       'http://localhost:3000/user-places',
       'Something went wrong fetching the favorite places. Please try again later.'
+    ).pipe(
+      tap({
+        next: (userPlaces) => this.userPlaces.set(userPlaces),
+      })
     );
   }
 
   /**
-   * Adds a place to the user's favorite list.
-   * @param placeId - The ID of the place to be added.
-   * @returns An Observable representing the HTTP PUT request.
+   * Adds a new place to the user's favorites both locally and on the server.
+   * Performs two main operations:
+   * 1. Optimistically updates the local state
+   * 2. Synchronizes with the backend via PUT request
+   *
+   * @param place - The Place object to be added to favorites
+   * @returns Observable<unknown> - The HTTP PUT request observable
+   *
+   * @example
+   * addPlaceToUserPlaces(newPlace).subscribe({
+   *   next: () => console.log('Successfully added'),
+   *   error: (err) => console.error('Failed to add', err)
+   * });
    */
-  addPlaceToUserPlaces(placeId: string) {
+  addPlaceToUserPlaces(place: Place) {
+    this.userPlaces.update((prevPlaces) => [...prevPlaces, place]);
     return this.httpClient.put('http://localhost:3000/user-places', {
-      placeId: placeId,
+      placeId: place.id,
     });
   }
 
