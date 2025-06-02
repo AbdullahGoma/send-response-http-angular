@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { PlacesContainerComponent } from '../places-container/places-container.component';
 import { PlacesComponent } from '../places.component';
 import { PlacesService } from '../places.service';
+import { Place } from '../place.model';
 
 /**
  * Component for displaying the user's favorite places.
@@ -60,6 +61,32 @@ export class UserPlacesComponent implements OnInit {
       },
     });
 
+    this.autoUnsubscribe(subscription);
+  }
+
+  /**
+   * Handles the removal of a place from user favorites.
+   * Manages the subscription lifecycle automatically to prevent memory leaks.
+   *
+   * @param place - The Place object to remove, containing:
+   *   - `id`: Unique identifier for the place (required)
+   *   - `title`: Display name (used in error messages if removal fails)
+   *
+   * @operation
+   * 1. Initiates removal via PlacesService
+   * 2. Automatically manages subscription cleanup
+   * 3. Relies on service for error handling and state management
+   *
+   * @example
+   * // Basic usage
+   * onRemovePlace(selectedPlace);
+   *
+   * @note Uses automatic subscription cleanup via autoUnsubscribe
+   * @see PlacesService.removeUserPlace
+   * @see autoUnsubscribe
+   */
+  onRemovePlace(place: Place) {
+    const subscription = this.placesService.removeUserPlace(place).subscribe();
     this.autoUnsubscribe(subscription);
   }
 

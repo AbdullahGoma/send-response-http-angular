@@ -21,10 +21,10 @@
   <!-- Data State: -->
   <!-- If places exist, render the places list component -->
   @if (places()) {
-  <app-places [places]="places()!" />
+  <app-places [places]="places()!" (selectPlace)="onRemovePlace($event)" />
   }
   <!-- If places array is empty, show fallback message -->
-  @else if (places()?.length === 0) {
+  @else if (places().length === 0) {
   <p class="fallback-text">Unfortunately, no places could be found.</p>
   }
 </app-places-container>

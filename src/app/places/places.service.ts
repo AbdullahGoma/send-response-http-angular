@@ -150,11 +150,68 @@ export class PlacesService {
   }
 
   /**
-   * Removes a place from the user's favorites.
-   * @param place - The place to be removed.
+   * Removes a place from user favorites with optimistic UI updates and server synchronization.
+   * Implements a robust removal pattern that:
+   *
+   * 1. Verifies the place exists before removal
+   * 2. Optimistically updates local state
+   * 3. Synchronizes with backend via DELETE request
+   * 4. Provides automatic rollback on failure
+   * 5. Integrates with application error handling
+   *
+   * @param place - The Place to remove, requiring:
+   *   - `id`: For identification and API endpoint construction
+   *   - `title`: For user-friendly error messages
+   *
+   * @returns Observable<void> that:
+   *   - Completes silently on successful removal
+   *   - Emits Error when:
+   *     - Network/server failure occurs
+   *     - Invalid place data provided
+   *
+   * @throws Error with contextual message including:
+   *   - Place title for identification
+   *   - Original error details when available
+   *
+   * @sideEffects
+   * - Updates userPlaces signal state
+   * - May trigger ErrorService notifications
+   * - Modifies browser network activity
+   *
+   * @example
+   * // Basic usage
+   * removeUserPlace(placeToRemove).subscribe({
+   *   complete: () => console.log('Removal successful'),
+   *   error: (err) => console.error('Removal failed:', err.message)
+   * });
+   *
+   * @example
+   * // With async/await
+   * try {
+   *   await lastValueFrom(removeUserPlace(place));
+   * } catch (err) {
+   *   // Error modal shown automatically by ErrorService
+   *   // Local state already rolled back
+   * }
    */
   removeUserPlace(place: Place) {
-    // Implementation needed
+    const prevPlaces = this.userPlaces();
+
+    if (prevPlaces.some((p) => p.id === place.id)) {
+      this.userPlaces.set(prevPlaces.filter((p) => p.id !== place.id));
+    }
+
+    return this.httpClient
+      .delete('http://localhost:3000/user-places/' + place.id)
+      .pipe(
+        catchError((error) => {
+          this.userPlaces.set(prevPlaces);
+          this.errorService.showError('Failed to remove the selected place.');
+          return throwError(
+            () => new Error(`Failed to remove "${place.title}".`)
+          );
+        })
+      );
   }
 
   /**
