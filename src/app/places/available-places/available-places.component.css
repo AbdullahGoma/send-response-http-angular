@@ -1,4 +1,7 @@
-/* Loading State (unchanged from previous enhancement) */
+/* -------------------------------
+   Style: Loading State
+   Description: Shown when data is being fetched
+---------------------------------- */
 .fallback-text {
   text-align: center;
   font-size: 1.5rem;
@@ -19,6 +22,7 @@
 }
 
 .fallback-text::after {
+  /* Adds animated dots to simulate loading */
   content: '...';
   display: inline-block;
   width: 1em;
@@ -26,7 +30,10 @@
   animation: dotPulse 1.5s infinite;
 }
 
-/* Error State */
+/* -------------------------------
+   Style: Error Message
+   Description: Shown when API request fails
+---------------------------------- */
 .error-text {
   text-align: center;
   font-size: 1.4rem;
@@ -50,7 +57,10 @@
   filter: drop-shadow(0 0 4px rgba(255, 158, 158, 0.5));
 }
 
-/* No Places State */
+/* -------------------------------
+   Style: Empty Data / No Results
+   Description: Displayed when places list is empty
+---------------------------------- */
 .no-places-text {
   text-align: center;
   font-size: 1.4rem;
@@ -74,7 +84,9 @@
   filter: drop-shadow(0 0 4px rgba(254, 238, 134, 0.5));
 }
 
-/* Animations */
+/* -------------------------------
+   Animations
+---------------------------------- */
 @keyframes dotPulse {
   0%   { opacity: 0; }
   33%  { opacity: 1; }
@@ -98,7 +110,9 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive adjustments */
+/* -------------------------------
+   Responsive Tweaks for Small Screens
+---------------------------------- */
 @media (max-width: 768px) {
   .fallback-text,
   .error-text,

@@ -1,15 +1,24 @@
+<!-- Wrapper container using the PlacesContainerComponent with a title -->
 <app-places-container title="Available Places">
+
+  <!-- Show loading message while fetching data and no error present -->
   @if (isFetching() && !error()) {
     <p class="fallback-text">Fetching available places...</p>
   }
 
+  <!-- Show error message if an error occurred -->
   @if (error()) {
     <p class="error-text">{{ error() }}</p>
   }
 
+  <!-- Show list of places if data is available -->
   @if (places()) {
-  <app-places [places]="places()!" (selectPlace)="onSelectPlace($event)" />
+    <!-- Render PlacesComponent and pass the data to it -->
+    <app-places [places]="places()!" (selectPlace)="onSelectPlace($event)" />
+  
+  <!-- Show fallback if data loaded but list is empty -->
   } @else if (places()?.length === 0) {
-  <p class="fallback-text">Unfortunately, no places could be found.</p>
+    <p class="fallback-text">Unfortunately, no places could be found.</p>
   }
+
 </app-places-container>
