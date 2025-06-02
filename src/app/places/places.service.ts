@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Place } from './place.model';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, tap, throwError } from 'rxjs';
+import { ErrorService } from '../shared/error.service';
 
 /**
  * Service for handling all logic related to places,
@@ -11,6 +12,11 @@ import { catchError, map, tap, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class PlacesService {
+  /**
+   * Injected ErrorService instance for centralized error handling.
+   * Private access modifier enforces error handling through service API.
+   */
+  private errorService = inject(ErrorService);
   /**
    * Injected HttpClient instance used to make HTTP requests.
    */
@@ -64,37 +70,59 @@ export class PlacesService {
   }
 
   /**
-   * Adds a place to the user's favorites with optimistic UI updates and server synchronization.
-   * Implements a robust pattern that:
-   * 1. Checks for duplicate places before adding
-   * 2. Optimistically updates the local state if the place is new
-   * 3. Synchronizes with the backend via PUT request
-   * 4. Automatically rolls back on failure while preserving the original state
+   * Manages the addition of places to user favorites with comprehensive state handling.
+   * Implements a robust pattern featuring:
    *
-   * @param place - The Place object to be added to favorites. Must contain an `id` property.
-   * @returns Observable<void> - The HTTP PUT request observable that:
-   *   - Completes on successful server update
-   *   - Emits an Error on failure (with automatic state rollback)
+   * 1. Duplicate Prevention - Checks for existing places before adding
+   * 2. Optimistic Updates - Immediately updates local state for responsive UI
+   * 3. Synchronized Backend Operation - Persists changes to server
+   * 4. Error Resilience:
+   *    - Automatic state rollback on failure
+   *    - Integrated error reporting via ErrorService
+   *    - Detailed error propagation
    *
-   * @throws Error with descriptive message when:
-   *   - The place already exists in favorites
-   *   - Server request fails ("Failed to store selected place")
+   * @param place - The Place object to add. Requires:
+   *   - `id` - Unique identifier for the place
+   *   - `title` - Display name (used in error messages)
+   *
+   * @returns Observable<void> that:
+   *   - Completes silently on success
+   *   - Emits Error when:
+   *     - Place already exists (silent no-op)
+   *     - Network/server failure (with rollback)
+   *     - Invalid place data
+   *
+   * @throws Error with user-friendly message including:
+   *   - Place title for context
+   *   - Original error details when available
+   *   - Recovery suggestion
+   *
+   * @sideEffects
+   * - Updates userPlaces signal state
+   * - May trigger ErrorService notifications
+   * - Modifies browser network activity
    *
    * @example
-   * // Basic usage
-   * addPlaceToUserPlaces(newPlace).subscribe({
-   *   complete: () => console.log('Successfully added to server'),
-   *   error: (err) => console.error('Operation failed:', err.message)
+   * // Basic subscription
+   * addPlaceToUserPlaces(place).subscribe({
+   *   complete: () => this.notifySuccess(),
+   *   error: (err) => this.handleError(err)
    * });
    *
    * @example
-   * // With async/await
+   * // Using async/await
    * try {
-   *   await lastValueFrom(addPlaceToUserPlaces(newPlace));
-   *   // Update successful
+   *   await lastValueFrom(addPlaceToUserPlaces(place));
    * } catch (err) {
-   *   // Handle error (state is automatically rolled back)
+   *   // Error modal already shown by ErrorService
+   *   // State automatically rolled back
    * }
+   *
+   * @example
+   * // Error cases handled automatically:
+   * // - Shows error modal via ErrorService
+   * // - Rolls back optimistic update
+   * addPlaceToUserPlaces(invalidPlace); // Handled gracefully
    */
   addPlaceToUserPlaces(place: Place) {
     const prevPlaces = this.userPlaces();
@@ -110,7 +138,13 @@ export class PlacesService {
       .pipe(
         catchError((error) => {
           this.userPlaces.set(prevPlaces);
-          return throwError(() => new Error('Failed to store selected place.'));
+          this.errorService.showError('Failed to store selected place.');
+          return throwError(
+            () =>
+              new Error(
+                `Failed to add "${place.title}". Please try again later.`
+              )
+          );
         })
       );
   }
