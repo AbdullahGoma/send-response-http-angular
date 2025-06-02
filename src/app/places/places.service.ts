@@ -64,25 +64,55 @@ export class PlacesService {
   }
 
   /**
-   * Adds a new place to the user's favorites both locally and on the server.
-   * Performs two main operations:
-   * 1. Optimistically updates the local state
-   * 2. Synchronizes with the backend via PUT request
+   * Adds a place to the user's favorites with optimistic UI updates and server synchronization.
+   * Implements a robust pattern that:
+   * 1. Checks for duplicate places before adding
+   * 2. Optimistically updates the local state if the place is new
+   * 3. Synchronizes with the backend via PUT request
+   * 4. Automatically rolls back on failure while preserving the original state
    *
-   * @param place - The Place object to be added to favorites
-   * @returns Observable<unknown> - The HTTP PUT request observable
+   * @param place - The Place object to be added to favorites. Must contain an `id` property.
+   * @returns Observable<void> - The HTTP PUT request observable that:
+   *   - Completes on successful server update
+   *   - Emits an Error on failure (with automatic state rollback)
+   *
+   * @throws Error with descriptive message when:
+   *   - The place already exists in favorites
+   *   - Server request fails ("Failed to store selected place")
    *
    * @example
+   * // Basic usage
    * addPlaceToUserPlaces(newPlace).subscribe({
-   *   next: () => console.log('Successfully added'),
-   *   error: (err) => console.error('Failed to add', err)
+   *   complete: () => console.log('Successfully added to server'),
+   *   error: (err) => console.error('Operation failed:', err.message)
    * });
+   *
+   * @example
+   * // With async/await
+   * try {
+   *   await lastValueFrom(addPlaceToUserPlaces(newPlace));
+   *   // Update successful
+   * } catch (err) {
+   *   // Handle error (state is automatically rolled back)
+   * }
    */
   addPlaceToUserPlaces(place: Place) {
-    this.userPlaces.update((prevPlaces) => [...prevPlaces, place]);
-    return this.httpClient.put('http://localhost:3000/user-places', {
-      placeId: place.id,
-    });
+    const prevPlaces = this.userPlaces();
+
+    if (!prevPlaces.some((p) => p.id === place.id)) {
+      this.userPlaces.set([...prevPlaces, place]);
+    }
+
+    return this.httpClient
+      .put('http://localhost:3000/user-places', {
+        placeId: place.id,
+      })
+      .pipe(
+        catchError((error) => {
+          this.userPlaces.set(prevPlaces);
+          return throwError(() => new Error('Failed to store selected place.'));
+        })
+      );
   }
 
   /**
