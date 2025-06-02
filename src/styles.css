@@ -47,7 +47,7 @@ html {
 body {
   margin: 0;
   padding: 2rem;
-  background: linear-gradient(180deg, #1f1c2c 0%, #191627 100%); /* Enhanced gradient */
+  background: linear-gradient(270deg, #1f1c2c 0%, #191627 100%); /* Enhanced gradient */
   min-height: 100vh; /* Full viewport height */
 }
 
