@@ -1,90 +1,102 @@
-/* Loading State (unchanged from previous enhancement) */
+/* =========================
+   Styles for User Places Component
+   ========================= */
+
+/* Loading State - fallback text */
 .fallback-text {
-  text-align: center;
-  font-size: 1.5rem;
-  color: #8feeff;
-  padding: 2.5rem;
-  max-width: 60ch;
-  margin: 2rem auto;
-  line-height: 1.8;
-  position: relative;
-  background: rgba(30, 27, 42, 0.7);
-  border-radius: 1.5rem;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(143, 238, 255, 0.2);
-  box-shadow: 
+  text-align: center;               /* Center text horizontally */
+  font-size: 1.5rem;                /* Larger font for emphasis */
+  color: #8feeff;                   /* Light blue text color */
+  padding: 2.5rem;                  /* Space around text */
+  max-width: 60ch;                  /* Limit max line length */
+  margin: 2rem auto;                /* Center block with vertical spacing */
+  line-height: 1.8;                 /* Improve readability */
+  position: relative;               /* For ::after positioning */
+  background: rgba(30, 27, 42, 0.7); /* Semi-transparent dark background */
+  border-radius: 1.5rem;            /* Rounded corners */
+  backdrop-filter: blur(8px);       /* Blur background behind the element */
+  border: 1px solid rgba(143, 238, 255, 0.2); /* Light blue border */
+  box-shadow:                      /* Outer and inner subtle glow */
     0 0 20px rgba(143, 238, 255, 0.1),
     inset 0 0 15px rgba(222, 250, 248, 0.1);
-  animation: fadeIn 0.6s ease-out;
+  animation: fadeIn 0.6s ease-out;  /* Fade in on appear */
 }
 
+/* Animated dots after loading text */
 .fallback-text::after {
-  content: '...';
+  content: '...';                   /* Initial dots */
   display: inline-block;
   width: 1em;
   text-align: left;
-  animation: dotPulse 1.5s infinite;
+  animation: dotPulse 1.5s infinite; /* Animate dots (1 to 3 dots cycling) */
 }
 
-/* Error State */
+/* Error State - error message styling */
 .error-text {
   text-align: center;
   font-size: 1.4rem;
-  color: #ff9e9e;
+  color: #ff9e9e;                   /* Light red text */
   padding: 2.5rem;
   max-width: 70ch;
   margin: 2rem auto;
   line-height: 1.8;
-  background: rgba(68, 43, 43, 0.7);
+  background: rgba(68, 43, 43, 0.7); /* Dark reddish background */
   border-radius: 1.5rem;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 158, 158, 0.3);
-  box-shadow: 
+  box-shadow:
     0 0 20px rgba(255, 158, 158, 0.1),
     inset 0 0 15px rgba(255, 222, 222, 0.1);
-  animation: shake 0.5s ease-in-out;
+  animation: shake 0.5s ease-in-out; /* Shake effect on error */
 }
 
+/* Warning icon before error text */
 .error-text::before {
   content: "⚠️ ";
-  filter: drop-shadow(0 0 4px rgba(255, 158, 158, 0.5));
+  filter: drop-shadow(0 0 4px rgba(255, 158, 158, 0.5)); /* Soft glow */
 }
 
-/* No Places State */
+/* No Places Found State */
 .no-places-text {
   text-align: center;
   font-size: 1.4rem;
-  color: #feee86;
+  color: #feee86;                   /* Light yellow text */
   padding: 2.5rem;
   max-width: 60ch;
   margin: 2rem auto;
   line-height: 1.8;
-  background: rgba(68, 62, 43, 0.7);
+  background: rgba(68, 62, 43, 0.7); /* Dark yellow-ish background */
   border-radius: 1.5rem;
   backdrop-filter: blur(8px);
   border: 1px solid rgba(254, 238, 134, 0.3);
-  box-shadow: 
+  box-shadow:
     0 0 20px rgba(254, 238, 134, 0.1),
     inset 0 0 15px rgba(255, 248, 222, 0.1);
   animation: fadeIn 0.6s ease-out;
 }
 
+/* Search icon before no places text */
 .no-places-text::before {
   content: "🔍 ";
   filter: drop-shadow(0 0 4px rgba(254, 238, 134, 0.5));
 }
 
-/* Animations */
+/* =========================
+   Animations
+   ========================= */
+
+/* Dot pulsing animation for loading "..." */
 @keyframes dotPulse {
   0%   { opacity: 0; }
-  33%  { opacity: 1; }
-  66%  { opacity: 1; }
-  100% { opacity: 1; content: '...'; }
   20%  { content: '.'; }
+  33%  { opacity: 1; }
   40%  { content: '..'; }
   60%  { content: '...'; }
+  66%  { opacity: 1; }
+  100% { opacity: 1; content: '...'; }
 }
 
+/* Shake animation for errors */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-5px); }
@@ -93,12 +105,16 @@
   80% { transform: translateX(5px); }
 }
 
+/* Fade in and slide up */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive adjustments */
+/* =========================
+   Responsive styles for smaller screens
+   ========================= */
+
 @media (max-width: 768px) {
   .fallback-text,
   .error-text,

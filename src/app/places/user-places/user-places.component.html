@@ -1,15 +1,30 @@
+<!--
+  User Places Component
+
+  This component displays the user's favorite places inside a container.
+  It handles three main states:
+  1. Loading: Shows a loading message with animated dots while data is fetching.
+  2. Error: Displays an error message if fetching fails.
+  3. Data:
+     - If places exist, renders the places list component passing the places as input.
+     - If the places list is empty, shows a fallback "no places found" message.
+-->
 <app-places-container title="Your Favorite Places">
+  <!-- Loading State: show while fetching data and no error -->
   @if (isFetching() && !error()) {
-    <p class="fallback-text">Fetching Favourate places...</p>
+  <p class="fallback-text">Fetching Favourate places...</p>
   }
-
+  <!-- Error State: show error message if any -->
   @if (error()) {
-    <p class="error-text">{{ error() }}</p>
+  <p class="error-text">{{ error() }}</p>
   }
-
+  <!-- Data State: -->
+  <!-- If places exist, render the places list component -->
   @if (places()) {
   <app-places [places]="places()!" />
-  } @else if (places()?.length === 0) {
+  }
+  <!-- If places array is empty, show fallback message -->
+  @else if (places()?.length === 0) {
   <p class="fallback-text">Unfortunately, no places could be found.</p>
   }
 </app-places-container>
