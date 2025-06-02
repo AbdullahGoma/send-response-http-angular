@@ -1,3 +1,110 @@
+/* Loading State (unchanged from previous enhancement) */
 .fallback-text {
   text-align: center;
+  font-size: 1.5rem;
+  color: #8feeff;
+  padding: 2.5rem;
+  max-width: 60ch;
+  margin: 2rem auto;
+  line-height: 1.8;
+  position: relative;
+  background: rgba(30, 27, 42, 0.7);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(143, 238, 255, 0.2);
+  box-shadow: 
+    0 0 20px rgba(143, 238, 255, 0.1),
+    inset 0 0 15px rgba(222, 250, 248, 0.1);
+  animation: fadeIn 0.6s ease-out;
+}
+
+.fallback-text::after {
+  content: '...';
+  display: inline-block;
+  width: 1em;
+  text-align: left;
+  animation: dotPulse 1.5s infinite;
+}
+
+/* Error State */
+.error-text {
+  text-align: center;
+  font-size: 1.4rem;
+  color: #ff9e9e;
+  padding: 2.5rem;
+  max-width: 70ch;
+  margin: 2rem auto;
+  line-height: 1.8;
+  background: rgba(68, 43, 43, 0.7);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 158, 158, 0.3);
+  box-shadow: 
+    0 0 20px rgba(255, 158, 158, 0.1),
+    inset 0 0 15px rgba(255, 222, 222, 0.1);
+  animation: shake 0.5s ease-in-out;
+}
+
+.error-text::before {
+  content: "⚠️ ";
+  filter: drop-shadow(0 0 4px rgba(255, 158, 158, 0.5));
+}
+
+/* No Places State */
+.no-places-text {
+  text-align: center;
+  font-size: 1.4rem;
+  color: #feee86;
+  padding: 2.5rem;
+  max-width: 60ch;
+  margin: 2rem auto;
+  line-height: 1.8;
+  background: rgba(68, 62, 43, 0.7);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(254, 238, 134, 0.3);
+  box-shadow: 
+    0 0 20px rgba(254, 238, 134, 0.1),
+    inset 0 0 15px rgba(255, 248, 222, 0.1);
+  animation: fadeIn 0.6s ease-out;
+}
+
+.no-places-text::before {
+  content: "🔍 ";
+  filter: drop-shadow(0 0 4px rgba(254, 238, 134, 0.5));
+}
+
+/* Animations */
+@keyframes dotPulse {
+  0%   { opacity: 0; }
+  33%  { opacity: 1; }
+  66%  { opacity: 1; }
+  100% { opacity: 1; content: '...'; }
+  20%  { content: '.'; }
+  40%  { content: '..'; }
+  60%  { content: '...'; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .fallback-text,
+  .error-text,
+  .no-places-text {
+    font-size: 1.2rem;
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
 }
